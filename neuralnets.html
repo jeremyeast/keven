@@ -13,6 +13,19 @@ f(x,y)=xy
 <br>
 Would result in : <span id="single-gate-circuit"></span>
 
+<blockquote>How could we tweak X and Y in order to find a higher number than the above number ?</blockquote>
+
+<h3>Random Local Search</h3>
+<p>We could just bruteforce randomize some numbers in order to get the best possible number until we find the best possible answer.</p>
+<div>
+	Tweak amount by = <input type="number" value="0.01" id="single-gate-tweak" onChange="singleGateStrategyRandom()" />
+	<br>
+	Number of times iterations = <input type="number" value="100" id="single-gate-iterations" onChange="singleGateStrategyRandom()" />
+	<br>
+	<button onClick="singleGateStrategyRandom()">Try this strategy</button>
+</div>
+Best results : <span id="single-gate-strategy-random-result"></span>
+
 <script type="text/javascript">
 //Chapter 1: Real-valued Circuits
 function forwardMultiplyGate(x, y) {
@@ -20,10 +33,34 @@ function forwardMultiplyGate(x, y) {
 }
 singleGate();
 function singleGate() {
-	x = document.getElementById('single-gate-x').value;
-	y = document.getElementById('single-gate-y').value;
+	x = parseFloat(document.getElementById('single-gate-x').value);
+	y = parseFloat(document.getElementById('single-gate-y').value);
 	singleGateCircuit = forwardMultiplyGate(x, y);
 	console.log(singleGateCircuit);
 	document.getElementById('single-gate-circuit').innerHTML = singleGateCircuit;
+}
+
+function singleGateStrategyRandom() {
+	x = parseFloat(document.getElementById('single-gate-x').value);
+	y = parseFloat(document.getElementById('single-gate-y').value);
+	var best_x = x;
+	var best_y = y;
+	var best_out = -Infinity;
+	var tweak_amount = parseFloat(document.getElementById('single-gate-tweak').value);
+	var random_iterations = parseFloat(document.getElementById('single-gate-iterations').value);
+
+	//Loop over
+	for(var k = 0; k < 100; k++) {
+		var x_try = x + tweak_amount * (Math.random() * 2 - 1); // tweak x a bit
+		var y_try = y + tweak_amount * (Math.random() * 2 - 1); // tweak y a bit
+		var out = forwardMultiplyGate(x_try, y_try);
+		//console.log('out is:'+out+' and best is:'+best_out);
+		if(out > best_out) {
+			// best improvement yet! Keep track of the x and y
+			best_out = out; 
+			best_x = x_try, best_y = y_try;
+		}
+	}
+	document.getElementById('single-gate-strategy-random-result').innerHTML = '' + best_x + ',' + best_y;
 }
 </script>

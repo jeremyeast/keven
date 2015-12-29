@@ -3,6 +3,7 @@ Initial commit
 ---Todo
 
 Develop algorithms
+	Numerical gradient
 	neural network
 	backpropagation
 		https://theclevermachine.wordpress.com/2014/09/06/derivation-error-backpropagation-gradient-descent-for-neural-networks/
