@@ -61,12 +61,42 @@ We will use the same inputs and step_size as above to calculate our new
 </div>
 Better result : <span id="single-gate-strategy-analytic-gradient"></span>
 
+<h2>Multiple gates</h2>
+<p>We've only looked so far at a single circuit. While it gets more complex to represent, its not much harder to understand and execute it.
+<br>
+Let's look at these two gates where the inputs are x,y and z. It would translate into : (x+y)z
+<br>
+<img src="images/two-gates-circuit.png" />
+<br>
+</p>
+<div>
+	X = <input type="number" value="-2" id="two-gate-x" onChange="twoGate()" />
+	<br>
+	Y = <input type="number" value="5" id="two-gate-y" onChange="twoGate()" />
+	<br>
+	Z = <input type="number" value="-4" id="two-gate-z" onChange="twoGate()" />
+	<br>
+	<button onClick="twoGate()">Calculate this circuit</button>
+</div>
+f(x,y,z)=(x+y)z
+<br>
+Would result in : <span id="two-gate-circuit"></span>
+<h3>Computing multiple gates with backpropagation</h3>
+<p>
+Computing the above multiple gates would go about first calculating the derivative of Q and Z, and we now know that the derivative of Q is Z, and the derivative of Z is Q.
+<br>
+Through calculus, we get to understand that the derivative of the logic gate X+Y is 1.
+<br>
+We can now use the <strong>Chain Rule</strong> with the derivatives above.
+</p>
+<h3>XXXXXX</h3>
+
 <script type="text/javascript">
 //Chapter 1: Real-valued Circuits
 function forwardMultiplyGate(x, y) {
   return x * y;
 }
-//
+//First example - single gate
 function singleGate() {
 	x = parseFloat(document.getElementById('single-gate-x').value);
 	y = parseFloat(document.getElementById('single-gate-y').value);
@@ -75,6 +105,7 @@ function singleGate() {
 	document.getElementById('single-gate-circuit').innerHTML = singleGateCircuit;
 }
 
+//Strategy 1 - single gate
 function singleGateStrategyRandom() {
 	x = parseFloat(document.getElementById('single-gate-x').value);
 	y = parseFloat(document.getElementById('single-gate-y').value);
@@ -99,6 +130,7 @@ function singleGateStrategyRandom() {
 	document.getElementById('single-gate-strategy-random-result').innerHTML = 'X' + best_x + '<br>Y:' + best_y+'<br>Best new result:'+best_out;
 }
 
+//Strategy 2 - single gate
 function singleGateStrategyNumericalGradient() {
 	x = parseFloat(document.getElementById('single-gate-x').value);
 	y = parseFloat(document.getElementById('single-gate-y').value);
@@ -126,6 +158,7 @@ function singleGateStrategyNumericalGradient() {
 	document.getElementById('single-gate-strategy-numerical-gradient').innerHTML = 'Derivative X:' + x_derivative + '<br>Derivative Y:' + y_derivative+ '<br>After derivative:'+out_new;
 }
 
+//Strategy 3 - single gate
 function singleGateStrategyAnalyticGradient() {
 	x = parseFloat(document.getElementById('single-gate-x').value);
 	y = parseFloat(document.getElementById('single-gate-y').value);
@@ -142,4 +175,18 @@ function singleGateStrategyAnalyticGradient() {
 
 	document.getElementById('single-gate-strategy-analytic-gradient').innerHTML = 'New X:' + x + '<br>New Y:' + y+ '<br>After derivative:'+out_new;
 }
+
+function forwardAddGate(a, b) { 
+	return a + b;
+}
+
+function twoGate() {
+	x = parseFloat(document.getElementById('two-gate-x').value);
+	y = parseFloat(document.getElementById('two-gate-y').value);
+	z = parseFloat(document.getElementById('two-gate-z').value);
+	var q = forwardAddGate(x, y);
+	var output = forwardMultiplyGate(q, z);
+	document.getElementById('two-gate-circuit').innerHTML = 'Output is:'+output;
+}
+
 </script>
