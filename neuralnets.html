@@ -1,5 +1,5 @@
 <h1>Neural Nets</h1>
-
+<p>Tutorial to understand how Neural Networks</p>
 <h2>Single gate in the circuit</h2>
 <img src="images/single-gate-circuit.png" />
 <br>
@@ -8,6 +8,8 @@
 	X = <input type="number" value="-2" id="single-gate-x" onChange="singleGate()" />
 	<br>
 	Y = <input type="number" value="3" id="single-gate-y" onChange="singleGate()" />
+	<br>
+	<button onClick="singleGate()">Calculate the circuit</button>
 </div>
 f(x,y)=xy
 <br>
@@ -16,9 +18,10 @@ Would result in : <span id="single-gate-circuit"></span>
 <blockquote>How could we tweak X and Y in order to find a higher number than the above number ?</blockquote>
 
 <h3>Random Local Search</h3>
-<p>We could just bruteforce randomize some numbers in order to get the best possible number until we find the best possible answer.</p>
+<p>We could just bruteforce randomize some numbers in order to get the best possible number until we find the best possible answer.
+</p>
 <div>
-	Tweak amount by = <input type="number" value="0.01" id="single-gate-tweak" onChange="singleGateStrategyRandom()" />
+	Tweak amount by = <input type="number" value="0.01" id="single-gate-deri" onChange="singleGateStrategyRandom()" />
 	<br>
 	Number of times iterations = <input type="number" value="100" id="single-gate-iterations" onChange="singleGateStrategyRandom()" />
 	<br>
@@ -26,12 +29,25 @@ Would result in : <span id="single-gate-circuit"></span>
 </div>
 Best results : <span id="single-gate-strategy-random-result"></span>
 
+<h3>Numerical gradient</h3>
+<p>Take the output and reinsert that result in our desired "direction". In other words, we would modify our inputs X and Y with a "force".
+<br>
+We'll usually assign h=0.0001 and step_size = 0.01</p>
+<div>
+	h tweak amount by = <input type="number" value="0.0001" id="single-gate-h" onChange="singleGateStrategyRandom()" />
+	<br>
+	step size = <input type="number" value="0.01" id="single-gate-stepsize" onChange="singleGateStrategyRandom()" />
+	<br>
+	<button onClick="singleGateStrategyNumericalGradient()">Try this strategy</button>
+</div>
+Best results : <span id="single-gate-strategy-numerical-gradient"></span>
+
 <script type="text/javascript">
 //Chapter 1: Real-valued Circuits
 function forwardMultiplyGate(x, y) {
   return x * y;
 }
-singleGate();
+//
 function singleGate() {
 	x = parseFloat(document.getElementById('single-gate-x').value);
 	y = parseFloat(document.getElementById('single-gate-y').value);
@@ -62,5 +78,32 @@ function singleGateStrategyRandom() {
 		}
 	}
 	document.getElementById('single-gate-strategy-random-result').innerHTML = '' + best_x + ',' + best_y;
+}
+
+function singleGateStrategyNumericalGradient() {
+	x = parseFloat(document.getElementById('single-gate-x').value);
+	y = parseFloat(document.getElementById('single-gate-y').value);
+	var out = forwardMultiplyGate(x, y); // -6
+	var h = parseFloat(document.getElementById('single-gate-h').value);
+
+	// compute derivative with x
+	var xsumh = x + h;
+	var out2 = forwardMultiplyGate(xsumh, y);
+	//console.log(out2);
+	var x_derivative = (out2 - out) / h;
+
+	// compute derivative with y
+	var ysumh = y + h;
+	var out3 = forwardMultiplyGate(x, ysumh);
+	//console.log(out3);
+	var y_derivative = (out3 - out) / h;
+
+	var step_size = parseFloat(document.getElementById('single-gate-stepsize').value);
+	//New X, new Y
+	x = x + step_size * x_derivative;
+	y = y + step_size * y_derivative;
+	var out_new = forwardMultiplyGate(x, y);
+
+	document.getElementById('single-gate-strategy-numerical-gradient').innerHTML = 'Derivative X:' + x_derivative + '<br>Derivative Y:' + y_derivative+ '<br>After derivative:'+out_new;
 }
 </script>
