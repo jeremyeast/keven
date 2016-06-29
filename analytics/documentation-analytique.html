@@ -1,5 +1,5 @@
-OPTION 1
-<script type="text/javascript">
+<script>
+console.log(document.cookie);
 !function(a,b){a("Keen","https://d26b395fwzu5fz.cloudfront.net/3.2.7/keen.min.js",b)}(function(a,b,c){var d,e,f;c["_"+a]={},c[a]=function(b){c["_"+a].clients=c["_"+a].clients||{},c["_"+a].clients[b.projectId]=this,this._config=b},c[a].ready=function(b){c["_"+a].ready=c["_"+a].ready||[],c["_"+a].ready.push(b)},d=["addEvent","setGlobalProperties","trackExternalLink","on"];for(var g=0;g<d.length;g++){var h=d[g],i=function(a){return function(){return this["_"+a]=this["_"+a]||[],this["_"+a].push(arguments),this}};c[a].prototype[h]=i(h)}e=document.createElement("script"),e.async=!0,e.src=b,f=document.getElementsByTagName("script")[0],f.parentNode.insertBefore(e,f)},this);
 
  // create cookie
@@ -36,27 +36,38 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
+function getGaClientId() {
+  console.log('get client id');
+  try {
+    var tracker = ga.getAll()[0];
+    return tracker.get('clientId');
+  } catch(e) {
+    console.log("Error fetching clientId");
+    return null;
+  }
+}
+
+
 
 //Cookie data
+var cookieFirstSession = 'FirstSession';
+var cookieReturningSession = 'ReturningSession';
 var cookieGaName = '_ga';
-var value = 0;
 var client_uid = 0;
+var firstSession = readCookie(cookieFirstSession);
+var returningSession = readCookie(cookieReturningSession);
 
+client_uid = getGaClientId();
 // check if Analytics cookie does not exist, basically should never happen
-if (readCookie(cookieGaName) == null){
-  client_uid = readCookie(cookieGaName);
-}
-else {
-
+if (client_uid == null || client_uid == 'null'){
   client_uid = guid();
   createCookie(cookieGaName, client_uid, 100);
-
 }
 
 //Instatiate Keen
 var client = new Keen({
-  projectId: "576c57a880a7bd35977275f4",//Your keen data
-  writeKey: "629b052b8d9ab7811a01d5d777b09c2ed4c6c0c9410591f3283b052167842744c8d1f72838ea0d5b4bd49ddd0586ece8ec2f7452d1103ea186002d10a37de1634e140f035d6edd3fb15e8b717558b7c54ffb7001929fdcd6222fbd6872ba56fe"//Your keen key
+  projectId: "576c57a880a7bd35977275f4",
+  writeKey: "629b052b8d9ab7811a01d5d777b09c2ed4c6c0c9410591f3283b052167842744c8d1f72838ea0d5b4bd49ddd0586ece8ec2f7452d1103ea186002d10a37de1634e140f035d6edd3fb15e8b717558b7c54ffb7001929fdcd6222fbd6872ba56fe"
 });
 
 // Create a data object with the properties you want to send
@@ -70,6 +81,8 @@ var sessionParams = {
   ip_address: "${keen.ip}",
   user_agent : "${keen.user_agent}",
   page_url : window.location.href,
+	firstSession : firstSession,
+	returningSession : returningSession,
   referrer : {
     url: document.referrer
   },
@@ -108,18 +121,14 @@ var sessionParams = {
     ]
   }
 };
-</script>
-
-<script>
-//Track actions
-client.addEvent("NOMEVENT", sessionParams, function(err, res){
+console.log(sessionParams);
+client.addEvent("pageview", sessionParams, function(err, res){
   //todo : append value of event
   if (err) {
     console.log('Keen error');
   }
   else {
-    //console.log('Keen success');
+    console.log('Keen success');
   }
 });
-
 </script>
