@@ -1,0 +1,19 @@
+{
+  "name": "brain",
+  "version": "1.0.0",
+  "description": "nodeutility",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeremyeast/keven.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeremyeast/keven/issues"
+  },
+  "homepage": "https://github.com/jeremyeast/keven#readme"
+}
